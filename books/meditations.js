@@ -1,3 +1,11 @@
+// Coverage map (Books 1–12 → concepts; Marcus repeats each theme across many books, so repetition collapses into one concept):
+// Book 1 → med-20. Book 2 → med-01, med-05, med-09, med-11. Book 3 → med-11, med-13.
+// Book 4 → med-02, med-03, med-04, med-05, med-06, med-08, med-10, med-13, med-14, med-21.
+// Book 5 → med-03, med-06, med-09, med-12, med-16. Book 6 → med-17, med-18, med-21. Book 7 → med-10, med-15, med-19.
+// Book 8 → med-02, med-09. Book 9 → med-15, med-18, med-21. Book 10 → med-07, med-13. Book 11 → med-14, med-19.
+// Book 12 → med-15, med-21.
+// Recurring themes with no dropped idea: posthumous fame → absorbed by med-10; retreat & simplicity → med-04, med-08;
+// piety / the gods → absorbed by med-21; "nothing happens that can't be borne" → absorbed by med-03, med-13.
 window.registerBook({
   id: "meditations",
   title: "Meditations",
@@ -156,6 +164,15 @@ window.registerBook({
       idea: "The Stoic cosmos is a single fabric: whatever happens to you was spun into the whole from the beginning, prescribed for you the way a physician prescribes treatment — not always pleasant, always yours. So the trained posture toward events isn't clenched endurance but something warmer: welcome. Accept what comes as tailored to you, fitted to your particular curriculum.\n\nYou don't need the cosmology to use the function. Treating events as if chosen for your training changes the operating question from 'why me?' — which has no answer and produces only noise — to 'what is this for?' — which always has an answer you can act on.",
       deep: "This is distinct from the obstacle-becomes-the-way, and the distinction matters. That principle converts blockages into action once they've appeared. This one is upstream: a standing emotional stance toward everything that happens, including the unchangeable — the loss with no workaround, the diagnosis, the closed door. Conversion needs material; welcome needs nothing but arrival.\n\nThe mechanism is the elimination of the argument with reality. An event resisted is experienced twice — once as fact, once as ongoing protest — and the protest consumes precisely the energy that responding requires. Welcoming collapses the second experience. The event remains; the war about it ends. People who master this appear to recover from setbacks unnaturally fast, but nothing supernatural is happening: they simply aren't running the resistance process that consumes everyone else's months.\n\nThe failure mode to guard: this is not fatalism about the future. Stoics acted — governed, fought, built, corrected. Amor fati applies to what has already happened, the domain where resistance is pure waste. What can still be shaped, you shape with full force.\n\nApplication: take this year's biggest unwanted event and write its prescription — what, specifically, it has trained or revealed. Not to whitewash it. To collect what it already cost you.",
       source: "Books 3, 4 & 10"
+    },
+    {
+      id: "med-21",
+      section: "Acceptance",
+      title: "Providence or Atoms",
+      hook: "Marcus gave himself the same escape hatch throughout the notebook: either the universe is ordered, or it's atoms and chance. He built a life that wins either way.",
+      idea: "A dilemma runs through the Meditations like a refrain: providence or atoms. Either a rational cosmos, where everything is woven together with purpose — or blind particles colliding in the void, meaning nothing. Marcus never resolves it. Instead he shows that the answer doesn't change the assignment. If providence, then what happens is prescribed, and your part is to play it well. If atoms, then the universe supplies no order at all — which makes the order inside your own mind the only order there is, and governing it matters more, not less.\n\nEither metaphysics, same conduct. The practice survives the collapse of any theory beneath it.",
+      deep: "This is decision-making under irreducible uncertainty, run two thousand years early. When a question cannot be settled — and the nature of the cosmos qualifies — the move isn't to force an answer; it's to find the action that's correct across all answers, and take it. Game theory would later call this a dominant strategy. Marcus practices it on the largest question available, and the demonstration teaches the method: whenever you're paralyzed by an unresolvable what-if, stop working the question and start looking for the response that's robust under every branch.\n\nThe fork also future-proofs the whole philosophy, whether or not he intended it. A modern reader who can't accept a providential cosmos loses nothing — Marcus pre-built the materialist branch, and every practice in the book holds on it. Loving what happens leans on the woven-cosmos picture; providence-or-atoms is the load-bearing backup that carries the structure when the cosmology drops out.\n\nThere's a quieter teaching inside the atoms branch. If nothing out there supplies meaning, the response isn't despair — it's ownership. The mind becomes a small sovereign territory of order in a jurisdiction that has none, and keeping it governed becomes the entire game rather than a piece of one.\n\nApplication: take the unresolvable question that most reliably paralyzes you and write out both branches. Under each, what's the right next action? Where the two answers match — and they usually do — you were never actually blocked.",
+      source: "Books 4, 6, 9 & 12"
     },
     {
       id: "med-15",
