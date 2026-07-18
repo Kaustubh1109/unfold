@@ -1,0 +1,13 @@
+{
+  "name": "Unfold",
+  "short_name": "Unfold",
+  "description": "Books, one idea at a time.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#F5F1E6",
+  "theme_color": "#F5F1E6",
+  "icons": [
+    { "src": "icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ]
+}

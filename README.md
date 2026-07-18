@@ -11,6 +11,7 @@ A phone-first reading app that delivers books one idea at a time, in three layer
 ## How the app works
 
 - `index.html` is the entire app. Do not modify it to add books.
+- `manifest.json` is the PWA manifest (home-screen install). Not to be confused with `books/manifest.js`.
 - `books/manifest.js` lists the book files to load.
 - `books/*.js` — one file per book. Each file calls `window.registerBook({...})` with the book's data.
 - `sw.js` caches everything for offline reading. It has a `CACHE_VERSION` constant.
@@ -140,4 +141,4 @@ Hosted on GitHub Pages. Any push to the default branch redeploys automatically. 
 
 ## Design notes (for anyone touching index.html)
 
-Aesthetic: minimal zen / paper. Ink on rice paper, iOS-native serif (New York/Charter), hairline rules, one accent — the seal red, used only for saving. The signature element is the hand-drawn ensō circle used as the shuffle control. Keep everything else quiet: no shadows, no gradients, no decoration that doesn't encode meaning. Respect `prefers-reduced-motion`.
+Aesthetic: minimal zen / paper. Ink on rice paper (with a faint washi grain), iOS-native serif (New York/Charter), hairline rules, one accent — the seal red, used only for saving. Dark mode is sumi night: warm charcoal, same rules. The signature element is the ensō, and it carries real information everywhere it appears: each book's progress is an ensō arc that closes as you read (fully closed + seal-red at 100%), the shuffle control redraws it, and finishing a book earns a full-screen "the circle closes" moment. Layers unfold with a drawn rule and staggered paragraphs; the seal stamps with a press-and-tilt. Contents and Saved are bottom sheets; the phone back button walks the stack (sheet → reader → library); swipe left/right moves between ideas. Keep everything else quiet: no shadows, no gradients, no decoration that doesn't encode meaning. Respect `prefers-reduced-motion`.
