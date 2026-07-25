@@ -1,15 +1,17 @@
 // Unfold service worker — makes the app readable offline.
 // When adding a book: add its path to ASSETS and bump CACHE_VERSION.
-const CACHE_VERSION = "unfold-v6";
+const CACHE_VERSION = "unfold-v7";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon.png",
+  "./icon-512.png",
   "./books/manifest.js",
   "./books/naval.js",
   "./books/meditations.js",
-  "./books/principles.js"
+  "./books/principles.js",
+  "./books/psycho-cybernetics.js"
 ];
 
 self.addEventListener("install", (e) => {
