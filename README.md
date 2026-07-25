@@ -193,9 +193,15 @@ Dark mode is a true inversion, not a dimming. Both schemes clear WCAG AA.
 
 **The signature is the block meter.** One block per idea in the book: hollow = unread, solid ink = read, solid oxide = saved, oxide ring = where you are. It appears on every library row (glanceable progress) and above every concept (tappable — each block jumps to that idea). It is simultaneously the progress bar, the position indicator, and a navigation control, which is why it earns the space. **Do not add a second progress indicator anywhere.**
 
-**One thumb runs the app.** The fixed bottom slab is always the next action and always says what it does: `THE IDEA` → `DEEPER` → `NEXT IDEA` / `SHUFFLE` / `BACK TO LIBRARY`. A reader can finish an entire book without moving their thumb. The thin row above it holds prev (sequential only) or the read count (shuffle), plus the SAVE tag, which fills oxide when on.
+**The page is the button.** There is nothing pinned to the bottom of the screen — tapping anywhere on the concept advances it: hook → idea → deeper → the next idea. A reader finishes a whole book by tapping the same place repeatedly. The tap handler ignores taps that land on a control, taps that follow a scroll or swipe (>10px of movement), and taps made while text is selected. A quiet `TAP TO CONTINUE` line teaches the gesture and permanently retires itself after six taps (`S.flags.taps`). The last concept of a sequential book shows `END OF BOOK` and refuses to advance further.
+
+**Controls live at the top, in two rows.** Row one: `← LIBRARY`, then `READ` / save icon / `CONTENTS`. Row two: prev arrow, block meter, next arrow — the arrows flank the meter because that's what they move through, and prev is hidden entirely in shuffle books. `READ` is a real toggle: reading auto-marks it, and tapping un-marks, which also clears the book's completion flag so finishing again still celebrates. The save icon is a bookmark that fills oxide.
+
+**Section tag.** Each concept opens with its section in a small outlined pill — no fill, and the only rounded thing in the app, deliberately. No position counter in the body; the block meter carries that.
 
 **Motion is mechanical.** Snap easing (`cubic-bezier(0.2,0,0,1)`), short durations, no bounce, no pulsing, nothing breathes. Layers open by animating `grid-template-rows: 0fr → 1fr`. Concept changes cross-fade in 120ms. Finishing a book inverts the screen to a full-bleed COMPLETE card. `prefers-reduced-motion` kills all of it.
+
+**Watch CSS specificity when adding controls.** `.reader-top button.mono` styles the plain text buttons; `.readbtn` / `.savebtn` size themselves. A bare `.reader-top button` rule will out-specify the class rules and silently crush their padding — this has already happened once.
 
 **Structure carries meaning.** Numbering appears only where order is real information (sequential position, contents index). Library rows are labelled by mode and idea count, never by a decorative catalogue number.
 

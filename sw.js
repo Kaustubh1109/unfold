@@ -1,6 +1,6 @@
 // Unfold service worker — makes the app readable offline.
 // When adding a book: add its path to ASSETS and bump CACHE_VERSION.
-const CACHE_VERSION = "unfold-v7";
+const CACHE_VERSION = "unfold-v8";
 const ASSETS = [
   "./",
   "./index.html",

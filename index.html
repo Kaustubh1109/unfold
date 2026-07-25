@@ -72,7 +72,7 @@
     line-height: 0.96; text-wrap: balance;
   }
 
-  .screen { display: none; padding: 0 var(--pad) calc(9.5rem + env(safe-area-inset-bottom)); }
+  .screen { display: none; padding: 0 var(--pad) calc(3.5rem + env(safe-area-inset-bottom)); }
   .screen.active { display: block; }
 
   /* ================= LIBRARY ================= */
@@ -111,7 +111,8 @@
 
   /* ================= READER ================= */
   .reader-top { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 0 0.9rem; }
-  .reader-top button { padding: 0.5rem 0; min-height: 44px; display: flex; align-items: center; }
+  /* scoped to the plain text buttons only — .readbtn/.savebtn size themselves */
+  .reader-top > button, .reader-top button.mono { padding: 0.5rem 0; min-height: 44px; display: flex; align-items: center; }
   .reader-rail { padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
   .reader-rail .bookname { display: block; margin-bottom: 0.6rem; }
 
@@ -120,8 +121,10 @@
   .concept.in  { animation: rise 0.26s var(--snap) both; }
   @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-  .eyebrow { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; }
+  /* the one rounded thing in the app: the section tag */
+  .pill { display: inline-block; padding: 0.34rem 0.8rem 0.3rem; border: 1px solid var(--line); border-radius: 999px; margin-bottom: 1.15rem; }
   .concept-title { font-size: clamp(2.15rem, 10.2vw, 3.05rem); margin-bottom: 1.5rem; }
+  .taphint { display: block; margin-top: 1.9rem; opacity: 0.45; }
   .hook { font-size: 1.2rem; line-height: 1.45; font-weight: 400; letter-spacing: -0.012em; max-width: 34ch; }
 
   .layer { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.38s var(--snap), opacity 0.22s linear; }
@@ -133,33 +136,31 @@
   .layer-in p:last-of-type { margin-bottom: 0; }
   .srcline { margin-top: 2.2rem; padding-top: 1rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 1rem; }
 
-  /* ================= BOTTOM DOCK ================= */
-  .dock {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 12;
-    display: none; background: var(--paper); border-top: 1px solid var(--line);
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  .dock.active { display: block; }
-  .dock-row { display: flex; align-items: stretch; justify-content: space-between; height: 46px; }
-  .dock-row > * { display: flex; align-items: center; }
-  .dock-btn { padding: 0 var(--pad); }
-  .dock-btn:disabled { opacity: 0.32; }
-  .dock-stat { padding: 0 var(--pad); }
-  .dock-stat b { color: var(--ink); font-weight: 500; }
-  .tag {
-    padding: 0 var(--pad); border-left: 1px solid var(--line);
-    transition: background 0.14s linear, color 0.14s linear;
-  }
-  .tag.on { background: var(--oxide); }
-  .tag.on .mono { color: var(--raised); }
+  /* ================= READER CONTROLS ================= */
+  .ctrl { display: flex; align-items: center; gap: 0.5rem; }
+  .meter-wrap { flex: 1; min-width: 0; }
 
-  .slab {
-    display: block; width: 100%; height: 62px; background: var(--ink); color: var(--paper);
-    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
-    font-weight: 500; transition: opacity 0.12s linear;
+  .arrow {
+    width: 38px; height: 34px; flex-shrink: 0; display: grid; place-items: center;
+    border: 1px solid var(--line); transition: opacity 0.14s linear;
   }
-  .slab:active { opacity: 0.78; }
-  .slab.ghost { background: transparent; color: var(--ink); border-top: 1px solid var(--line); }
+  .arrow:disabled { opacity: 0.28; }
+  .arrow:active { background: var(--line); }
+  .arrow svg { width: 12px; height: 12px; display: block; }
+  .arrow svg path { fill: none; stroke: var(--ink); stroke-width: 1.9; stroke-linecap: square; }
+
+  .readbtn {
+    padding: 0 0.72rem; height: 34px; display: flex; align-items: center;
+    border: 1px solid var(--line); transition: background 0.14s linear, border-color 0.14s linear;
+  }
+  .readbtn.on { background: var(--ink); border-color: var(--ink); }
+  .readbtn.on .mono { color: var(--paper); }
+
+  .savebtn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); transition: border-color 0.14s linear; }
+  .savebtn svg { width: 12px; height: 16px; display: block; }
+  .savebtn svg path { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+  .savebtn.on { border-color: var(--oxide); }
+  .savebtn.on svg path { fill: var(--oxide); stroke: var(--oxide); }
 
   /* ================= PANEL (contents / saved) ================= */
   .panel {
@@ -227,20 +228,28 @@
 <main id="reader" class="screen">
   <div class="reader-top">
     <button class="mono" onclick="history.back()">← Library</button>
-    <button class="mono" onclick="openPanel('contents')">Contents</button>
+    <div class="ctrl">
+      <button class="readbtn" id="readbtn" onclick="toggleRead()" aria-pressed="false"><span class="mono">Read</span></button>
+      <button class="savebtn" id="savebtn" onclick="toggleSave()" aria-pressed="false" aria-label="Save this idea">
+        <svg viewBox="0 0 12 16" aria-hidden="true"><path d="M1 1 h10 v14 l-5 -4 -5 4 z"/></svg>
+      </button>
+      <button class="mono" onclick="openPanel('contents')">Contents</button>
+    </div>
   </div>
   <div class="reader-rail">
     <span class="mono bookname" id="reader-book"></span>
-    <div class="meter" id="reader-meter"></div>
+    <div class="ctrl">
+      <button class="arrow" id="prev" onclick="step(-1)" aria-label="Previous idea">
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M8 1 L3 6 L8 11"/></svg>
+      </button>
+      <div class="meter-wrap"><div class="meter" id="reader-meter"></div></div>
+      <button class="arrow" id="next" onclick="goNext()" aria-label="Next idea">
+        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 1 L9 6 L4 11"/></svg>
+      </button>
+    </div>
   </div>
   <article class="concept" id="concept"></article>
 </main>
-
-<!-- ================= DOCK ================= -->
-<nav class="dock" id="dock">
-  <div class="dock-row" id="dock-row"></div>
-  <button class="slab" id="slab" onclick="advance()"></button>
-</nav>
 
 <!-- ================= PANEL ================= -->
 <section class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
@@ -364,7 +373,6 @@ function enterReader() {
   readerOn = true;
   document.getElementById("library").classList.remove("active");
   document.getElementById("reader").classList.add("active");
-  document.getElementById("dock").classList.add("active");
   current.layer = 1;
   render();
   window.scrollTo(0, 0);
@@ -373,7 +381,6 @@ function enterReader() {
 function exitReader() {
   readerOn = false;
   document.getElementById("reader").classList.remove("active");
-  document.getElementById("dock").classList.remove("active");
   document.getElementById("library").classList.add("active");
   renderLibrary();
   window.scrollTo(0, 0);
@@ -397,10 +404,7 @@ function render() {
   const el = document.getElementById("concept");
   el.className = "concept in";
   el.innerHTML = `
-    <div class="eyebrow">
-      <span class="mono">${esc(c.section || b.title)}</span>
-      <span class="mono">${pad2(current.index + 1)} / ${pad2(b.concepts.length)}</span>
-    </div>
+    ${c.section ? `<span class="mono pill">${esc(c.section)}</span>` : ""}
     <h2 class="concept-title display">${esc(c.title)}</h2>
     <p class="hook">${esc(c.hook)}</p>
 
@@ -413,64 +417,101 @@ function render() {
       <div class="layer-head"><span class="mono">Deeper</span></div>
       ${paras(c.deep)}
       <div class="srcline"><span class="mono">Source</span><span class="mono">${esc(c.source || b.title)}</span></div>
-    </div></div>`;
-  renderDock();
+    </div></div>
+
+    <span class="mono taphint" id="taphint"></span>`;
+  renderControls();
+  updateHint();
 }
 
-function renderDock() {
+function renderControls() {
   const b = current.book;
   if (!b) return;
-  const row = document.getElementById("dock-row");
-  const saved = !!savedSet(b)[b.concepts[current.index].id];
+  const c = b.concepts[current.index];
   const seq = b.mode === "sequential";
-  const done = readCount(b), total = b.concepts.length;
+  const prev = document.getElementById("prev"), next = document.getElementById("next");
 
-  row.innerHTML = `
-    ${seq ? `<button class="mono dock-btn" id="prev" onclick="step(-1)">← Prev</button>`
-          : `<span class="mono dock-stat"><b>${pad2(done)}</b> / ${pad2(total)} read</span>`}
-    <button class="tag${saved ? " on" : ""}" id="tag" onclick="toggleSave()" aria-pressed="${saved}">
-      <span class="mono">${saved ? "Saved" : "Save"}</span>
-    </button>`;
-  if (seq) document.getElementById("prev").disabled = current.index === 0;
+  prev.style.display = seq ? "grid" : "none";          /* no "previous" in a shuffle */
+  prev.disabled = current.index === 0;
+  next.disabled = seq && current.index === b.concepts.length - 1;
 
-  const slab = document.getElementById("slab");
-  slab.classList.remove("ghost");
-  if (current.layer === 1) slab.textContent = "The idea";
-  else if (current.layer === 2) slab.textContent = "Deeper";
-  else if (seq) {
-    const last = current.index === total - 1;
-    slab.textContent = last ? "Back to library" : "Next idea";
-    if (last) slab.classList.add("ghost");
-  } else slab.textContent = "Shuffle";
+  const isRead = !!readSet(b)[c.id], isSaved = !!savedSet(b)[c.id];
+  const rb = document.getElementById("readbtn");
+  rb.classList.toggle("on", isRead);
+  rb.setAttribute("aria-pressed", isRead);
+  const sb = document.getElementById("savebtn");
+  sb.classList.toggle("on", isSaved);
+  sb.setAttribute("aria-pressed", isSaved);
 }
 
-/* the slab is the whole interaction: idea → deeper → next */
+/* The hint teaches the tap, then gets out of the way for good. */
+function updateHint() {
+  const h = document.getElementById("taphint");
+  if (!h) return;
+  const b = current.book;
+  const last = b.mode === "sequential" && current.index === b.concepts.length - 1;
+  const taught = (S.flags.taps || 0) >= 6;
+  let text = "";
+  if (current.layer === 3 && last) text = "End of book";
+  else if (!taught) text = current.layer === 3 ? "Tap for the next idea" : "Tap to continue";
+  h.textContent = text;
+  h.style.display = text ? "block" : "none";
+}
+
+/* tap anywhere: hook → idea → deeper → the next idea */
 function advance() {
+  const b = current.book;
   if (current.layer === 1) {
     document.getElementById("layer-idea").classList.add("open");
     current.layer = 2;
-    markRead();
-    renderDock();
+    countTap(); markRead(); updateHint();
   } else if (current.layer === 2) {
     document.getElementById("layer-deep").classList.add("open");
     current.layer = 3;
-    renderDock();
-  } else {
-    if (current.book.mode === "sequential") {
-      if (current.index === current.book.concepts.length - 1) history.back();
-      else step(1);
-    } else shuffle();
-  }
+    countTap(); updateHint();
+  } else goNext();
+}
+
+function goNext() {
+  const b = current.book;
+  if (b.mode !== "sequential") { shuffle(); return; }
+  if (current.index < b.concepts.length - 1) step(1);
+}
+
+function countTap() {
+  if ((S.flags.taps || 0) < 6) { S.flags.taps = (S.flags.taps || 0) + 1; save(); }
+}
+
+function refreshMeter() {
+  document.getElementById("reader-meter").innerHTML =
+    meterHTML(current.book, { here: current.index, jump: true });
 }
 
 function markRead() {
   const b = current.book, c = b.concepts[current.index];
   if (readSet(b)[c.id]) return;
   readSet(b)[c.id] = true; save();
-  document.getElementById("reader-meter").innerHTML = meterHTML(b, { here: current.index, jump: true });
+  refreshMeter(); renderControls(); maybeComplete();
+}
+
+/* one button, both directions */
+function toggleRead() {
+  const b = current.book, c = b.concepts[current.index];
+  if (readSet(b)[c.id]) {
+    delete readSet(b)[c.id];
+    delete S.flags["done-" + b.id];      /* re-finishing can celebrate again */
+  } else {
+    readSet(b)[c.id] = true; buzz(6);
+  }
+  save();
+  refreshMeter(); renderControls(); maybeComplete();
+}
+
+function maybeComplete() {
+  const b = current.book;
   if (readCount(b) === b.concepts.length && !S.flags["done-" + b.id]) {
     S.flags["done-" + b.id] = true; save();
-    setTimeout(() => showComplete(b), 700);
+    setTimeout(() => showComplete(b), 650);
   }
 }
 
@@ -495,21 +536,39 @@ function toggleSave() {
   if (savedSet(b)[c.id]) delete savedSet(b)[c.id];
   else { savedSet(b)[c.id] = true; buzz(9); }
   save();
-  renderDock();
-  document.getElementById("reader-meter").innerHTML = meterHTML(b, { here: current.index, jump: true });
+  renderControls(); refreshMeter();
 }
 
-/* ================= SWIPE ================= */
+/* ================= TAP / SWIPE ================= */
 (function () {
   const zone = document.getElementById("reader");
-  let x0 = 0, y0 = 0;
-  zone.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
-  zone.addEventListener("touchend", e => {
-    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
-    if (!readerOn || panelOpen || Math.abs(dx) < 64 || Math.abs(dy) > 48) return;
-    if (current.book.mode === "sequential") step(dx < 0 ? 1 : -1);
-    else shuffle();
+  let x0 = 0, y0 = 0, moved = false;
+
+  zone.addEventListener("touchstart", e => {
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; moved = false;
   }, { passive: true });
+
+  zone.addEventListener("touchmove", e => {
+    if (Math.abs(e.touches[0].clientX - x0) > 10 || Math.abs(e.touches[0].clientY - y0) > 10) moved = true;
+  }, { passive: true });
+
+  zone.addEventListener("touchend", e => {
+    if (!readerOn || panelOpen) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 64 && Math.abs(dy) < 48) {
+      if (current.book.mode === "sequential") step(dx < 0 ? 1 : -1);
+      else shuffle();
+    }
+  }, { passive: true });
+
+  /* the page itself is the button — except where a real control lives */
+  zone.addEventListener("click", e => {
+    if (!readerOn || panelOpen) return;
+    if (e.target.closest("button")) return;
+    if (String(window.getSelection())) return;     /* leave text selection alone */
+    if (moved) { moved = false; return; }          /* that was a scroll or a swipe */
+    advance();
+  });
 })();
 
 /* ================= PANEL ================= */
