@@ -174,28 +174,36 @@ Hosted on GitHub Pages. Any push to the default branch redeploys automatically. 
 
 ## Design notes (for anyone touching index.html)
 
-**Direction: industrial minimalism — bone, core, oxide.** Sportswear-catalogue rather than book-app: enormous tight-tracked uppercase grotesque, monospace utility labels, hairline rules, hard edges. Nothing is rounded anywhere — `border-radius: 0` is enforced in the reset, and that is a design decision, not an oversight. No shadows, no gradients, no ornament.
+**Direction: industrial minimalism — cream, core, ochre.** Sportswear-catalogue rather than book-app: enormous tight-tracked uppercase grotesque, monospace utility labels, hairline rules, hard edges. Nothing is rounded anywhere — `border-radius: 0` is enforced in the reset, and that is a design decision, not an oversight. No shadows, no gradients, no ornament.
 
 **Palette** (light / dark, defined once as CSS custom properties):
 
 | token | light | dark | used for |
 |---|---|---|---|
-| `--paper` | `#DCD7CB` bone | `#0E0D0B` core | page |
-| `--raised` | `#EDEAE2` salt | `#1A1917` | panels |
-| `--ink` | `#0E0D0B` | `#DCD7CB` | text, filled blocks, the slab |
-| `--mid` | `#6E695C` concrete | `#857F71` | mono labels |
-| `--line` | `#BFB8A7` | `#2C2A24` | hairlines, empty blocks |
-| `--oxide` | `#8C3F1D` | `#C2542A` | **saved things only** — never decorative |
+| `--paper` | `#F2EEE3` cream | `#1A1917` onyx | page |
+| `--raised` | `#FAF8F1` salt | `#262421` | panels |
+| `--ink` | `#141210` soft core | `#F2EEE3` cream | text, filled blocks |
+| `--mid` | `#6B6558` concrete | `#948D7D` | mono labels |
+| `--line` | `#D5CEBC` | `#33302A` | dividing rules only |
+| `--line-strong` | `#C2B8A2` | `#45413A` | control edges, empty meter blocks |
+| `--ochre` | `#B07D2B` | `#C89440` | **saved things only** — never decorative |
+| `--ochre-deep` | `#8A6018` | `#D9A855` | the same accent at small sizes |
 
 Dark mode is a true inversion, not a dimming. Both schemes clear WCAG AA.
 
-**Type is two families doing three jobs.** One grotesque (`Helvetica Neue`/system) for everything readable — set at weight 700, `letter-spacing: -0.035em`, uppercase, `line-height: 0.96` for titles; regular weight at 1.055rem/1.72 for body. One monospace for every label, count, and piece of metadata — 0.645rem, `0.16em` tracking, uppercase. If a string is data *about* the reading rather than the reading itself, it is monospace. No exceptions; that split is the whole system.
+Three rules keep this palette honest on a ground this bright. **Ink is soft black, never `#000`** — pure black on cream halates. **There are two line weights**: `--line` is a whisper for dividing rules; `--line-strong` holds an edge on anything with a boundary that must be seen (buttons, the section pill, empty meter blocks). A single hairline that read fine on bone washes out on cream — do not collapse them back into one. **There are two ochres for one accent**: `--ochre` fills area (meter blocks, the bookmark), `--ochre-deep` carries anything small or text-sized (the saved dot, contents `◆`, the you-are-here ring, focus rings) because the flat ochre only reaches 3:1 on cream. In dark mode "deep" goes *brighter*, not darker.
 
-**The signature is the block meter.** One block per idea in the book: hollow = unread, solid ink = read, solid oxide = saved, oxide ring = where you are. It appears on every library row (glanceable progress) and above every concept (tappable — each block jumps to that idea). It is simultaneously the progress bar, the position indicator, and a navigation control, which is why it earns the space. **Do not add a second progress indicator anywhere.**
+**The icon and the splash run dark, against the app.** The mark is the block meter — three read, one unread — on onyx with cream blocks, i.e. inverted from the cream app, which is how it has always been and is worth keeping: it holds up on a busy homescreen, and it sits legibly on the splash. It carries **no ochre** — the accent marks saved things, and an icon is decoration. `background_color` in the manifest is onyx for the same reason: a manifest can't vary by colour scheme, and a cream splash flashing on a phone at night is far worse than a dark one in daylight. Regenerate both PNGs from the same geometry if the palette moves again.
+
+**Type is two families doing three jobs.** One grotesque (`Helvetica Neue`/system) for everything readable — set at weight 700, `letter-spacing: -0.03em`, uppercase, `line-height: 0.96` for titles; regular weight at 1.055rem/1.72 for body. One monospace for every label, count, and piece of metadata — 0.645rem, `0.16em` tracking, uppercase. If a string is data *about* the reading rather than the reading itself, it is monospace. No exceptions; that split is the whole system.
+
+**Font smoothing is split on purpose.** Body text is `-webkit-font-smoothing: auto` — antialiasing thins reading text into glare against cream. Display type, the wordmark, panel titles, and the inverted COMPLETE card are `antialiased`, so huge caps stay crisp instead of clotting. If you add a new display-scale element, it wants `antialiased`; body-scale text does not.
+
+**The signature is the block meter.** One block per idea in the book: hollow = unread, solid ink = read, solid ochre = saved, ochre ring = where you are. It appears on every library row (glanceable progress) and above every concept (tappable — each block jumps to that idea). It is simultaneously the progress bar, the position indicator, and a navigation control, which is why it earns the space. **Do not add a second progress indicator anywhere.**
 
 **The page is the button.** There is nothing pinned to the bottom of the screen — tapping anywhere on the concept advances it: hook → idea → deeper → the next idea. A reader finishes a whole book by tapping the same place repeatedly. The tap handler ignores taps that land on a control, taps that follow a scroll or swipe (>10px of movement), and taps made while text is selected. A quiet `TAP TO CONTINUE` line teaches the gesture and permanently retires itself after six taps (`S.flags.taps`). The last concept of a sequential book shows `END OF BOOK` and refuses to advance further.
 
-**Controls live at the top, in two rows.** Row one: `← LIBRARY`, then `READ` / save icon / `CONTENTS`. Row two: prev arrow, block meter, next arrow — the arrows flank the meter because that's what they move through, and prev is hidden entirely in shuffle books. `READ` is a real toggle: reading auto-marks it, and tapping un-marks, which also clears the book's completion flag so finishing again still celebrates. The save icon is a bookmark that fills oxide.
+**Controls live at the top, in two rows.** Row one: `← LIBRARY`, then `READ` / save icon / `CONTENTS`. Row two: prev arrow, block meter, next arrow — the arrows flank the meter because that's what they move through, and prev is hidden entirely in shuffle books. `READ` is a real toggle: reading auto-marks it, and tapping un-marks, which also clears the book's completion flag so finishing again still celebrates. The save icon is a bookmark that fills ochre.
 
 **Section tag.** Each concept opens with its section in a small outlined pill — no fill, and the only rounded thing in the app, deliberately. No position counter in the body; the block meter carries that.
 

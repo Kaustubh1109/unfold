@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Unfold</title>
 <meta name="description" content="Books. One idea at a time.">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#DCD7CB">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0E0D0B">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F2EEE3">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1A1917">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Unfold">
@@ -15,18 +15,26 @@
 <link rel="icon" href="icon.png">
 <style>
   /* ============================================================
-     UNFOLD — bone, core, oxide. One grotesque, one monospace.
+     UNFOLD — cream, core, ochre. One grotesque, one monospace.
      Nothing is rounded. Nothing decorates. The block meter is
      the book: one block per idea, filled as you read it.
+
+     Two line weights, on purpose: --line is a whisper (dividing
+     rules), --line-strong holds an edge (controls, meter blocks)
+     because a hairline that read fine on bone washes out on cream.
+     Two ochres, same reason: --ochre fills area, --ochre-deep
+     carries small marks and text where 3:1 isn't enough.
      ============================================================ */
   :root {
-    --paper:  #DCD7CB;   /* bone */
-    --raised: #EDEAE2;   /* salt */
-    --ink:    #0E0D0B;   /* core */
-    --mid:    #6E695C;   /* concrete */
-    --line:   #BFB8A7;
-    --oxide:  #8C3F1D;   /* the only accent. saved things only. */
-    --paper-rgb: 220, 215, 203;
+    --paper:       #F2EEE3;   /* cream */
+    --raised:      #FAF8F1;   /* salt */
+    --ink:         #141210;   /* soft core — pure black halates on cream */
+    --mid:         #6B6558;   /* concrete */
+    --line:        #D5CEBC;   /* dividing rules */
+    --line-strong: #C2B8A2;   /* control edges, meter blocks */
+    --ochre:       #B07D2B;   /* the only accent. saved things only. */
+    --ochre-deep:  #8A6018;   /* same accent, small marks + text */
+    --paper-rgb: 242, 238, 227;
 
     --sans: "Helvetica Neue", Helvetica, -apple-system, "Segoe UI", Arial, sans-serif;
     --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
@@ -35,13 +43,15 @@
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --paper:  #0E0D0B;
-      --raised: #1A1917;
-      --ink:    #DCD7CB;
-      --mid:    #857F71;
-      --line:   #2C2A24;
-      --oxide:  #C2542A;
-      --paper-rgb: 14, 13, 11;
+      --paper:       #1A1917;   /* onyx */
+      --raised:      #262421;
+      --ink:         #F2EEE3;   /* cream */
+      --mid:         #948D7D;
+      --line:        #33302A;
+      --line-strong: #45413A;
+      --ochre:       #C89440;   /* accent goes up, not down, on onyx */
+      --ochre-deep:  #D9A855;
+      --paper-rgb: 26, 25, 23;
     }
   }
 
@@ -55,12 +65,14 @@
     line-height: 1.72;
     font-weight: 400;
     min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
     text-rendering: optimizeLegibility;
+    /* NOT antialiased: on a ground this bright it thins reading text
+       to the point of glare. Subpixel keeps the body solid. */
+    -webkit-font-smoothing: auto;
   }
   button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; touch-action: manipulation; }
-  button:focus-visible { outline: 2px solid var(--oxide); outline-offset: 2px; }
+  button:focus-visible { outline: 2px solid var(--ochre-deep); outline-offset: 2px; }
 
   /* ---------- type roles ---------- */
   .mono {
@@ -68,8 +80,11 @@
     text-transform: uppercase; color: var(--mid); font-weight: 500;
   }
   .display {
-    font-weight: 700; text-transform: uppercase; letter-spacing: -0.035em;
+    font-weight: 700; text-transform: uppercase; letter-spacing: -0.03em;
     line-height: 0.96; text-wrap: balance;
+    /* the inverse of the body rule: huge caps go antialiased so the
+       black mass stays crisp instead of clotting on cream */
+    -webkit-font-smoothing: antialiased;
   }
 
   .screen { display: none; padding: 0 var(--pad) calc(3.5rem + env(safe-area-inset-bottom)); }
@@ -77,10 +92,10 @@
 
   /* ================= LIBRARY ================= */
   .masthead { display: flex; align-items: flex-start; justify-content: space-between; padding: 1.5rem 0 0.35rem; gap: 1rem; }
-  .wordmark { font-size: 2.1rem; font-weight: 700; letter-spacing: -0.05em; line-height: 1; text-transform: uppercase; }
+  .wordmark { font-size: 2.1rem; font-weight: 700; letter-spacing: -0.045em; line-height: 1; text-transform: uppercase; -webkit-font-smoothing: antialiased; }
   .saved-btn { padding: 0.35rem 0 0.35rem 0.75rem; min-height: 44px; display: flex; align-items: flex-start; }
   .saved-btn .mono { color: var(--ink); }
-  .saved-btn .dot { display: inline-block; width: 0.45rem; height: 0.45rem; background: var(--oxide); margin-right: 0.4rem; vertical-align: 0.02rem; }
+  .saved-btn .dot { display: inline-block; width: 0.45rem; height: 0.45rem; background: var(--ochre-deep); margin-right: 0.4rem; vertical-align: 0.02rem; }
   .sub { padding-bottom: 1.6rem; }
 
   .book-row {
@@ -100,14 +115,14 @@
   .meter { display: flex; gap: 2px; width: 100%; align-items: stretch; }
   .meter.tall { gap: 3px; }
   .blk {
-    flex: 1 1 0; min-width: 0; height: 13px; border: 1px solid var(--line);
+    flex: 1 1 0; min-width: 0; height: 13px; border: 1px solid var(--line-strong);
     background: transparent; padding: 0; transition: background 0.2s var(--snap), border-color 0.2s var(--snap);
   }
   .meter.tall .blk { height: 22px; }
   .blk.read  { background: var(--ink); border-color: var(--ink); }
-  .blk.saved { background: var(--oxide); border-color: var(--oxide); }
-  .blk.here  { border-color: var(--oxide); border-width: 2px; }
-  .meter.tall .blk.here { background: var(--oxide); border-color: var(--oxide); }
+  .blk.saved { background: var(--ochre); border-color: var(--ochre); }
+  .blk.here  { border-color: var(--ochre-deep); border-width: 2px; }
+  .meter.tall .blk.here { background: var(--ochre); border-color: var(--ochre); }
 
   /* ================= READER ================= */
   .reader-top { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 0 0.9rem; }
@@ -122,7 +137,7 @@
   @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
   /* the one rounded thing in the app: the section tag */
-  .pill { display: inline-block; padding: 0.34rem 0.8rem 0.3rem; border: 1px solid var(--line); border-radius: 999px; margin-bottom: 1.15rem; }
+  .pill { display: inline-block; padding: 0.34rem 0.8rem 0.3rem; border: 1px solid var(--line-strong); border-radius: 999px; margin-bottom: 1.15rem; }
   .concept-title { font-size: clamp(2.15rem, 10.2vw, 3.05rem); margin-bottom: 1.5rem; }
   .taphint { display: block; margin-top: 1.9rem; opacity: 0.45; }
   .hook { font-size: 1.2rem; line-height: 1.45; font-weight: 400; letter-spacing: -0.012em; max-width: 34ch; }
@@ -142,25 +157,25 @@
 
   .arrow {
     width: 38px; height: 34px; flex-shrink: 0; display: grid; place-items: center;
-    border: 1px solid var(--line); transition: opacity 0.14s linear;
+    border: 1px solid var(--line-strong); transition: opacity 0.14s linear;
   }
   .arrow:disabled { opacity: 0.28; }
-  .arrow:active { background: var(--line); }
+  .arrow:active { background: var(--line-strong); }
   .arrow svg { width: 12px; height: 12px; display: block; }
   .arrow svg path { fill: none; stroke: var(--ink); stroke-width: 1.9; stroke-linecap: square; }
 
   .readbtn {
     padding: 0 0.72rem; height: 34px; display: flex; align-items: center;
-    border: 1px solid var(--line); transition: background 0.14s linear, border-color 0.14s linear;
+    border: 1px solid var(--line-strong); transition: background 0.14s linear, border-color 0.14s linear;
   }
   .readbtn.on { background: var(--ink); border-color: var(--ink); }
   .readbtn.on .mono { color: var(--paper); }
 
-  .savebtn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); transition: border-color 0.14s linear; }
+  .savebtn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line-strong); transition: border-color 0.14s linear; }
   .savebtn svg { width: 12px; height: 16px; display: block; }
   .savebtn svg path { fill: none; stroke: var(--ink); stroke-width: 1.6; }
-  .savebtn.on { border-color: var(--oxide); }
-  .savebtn.on svg path { fill: var(--oxide); stroke: var(--oxide); }
+  .savebtn.on { border-color: var(--ochre); }
+  .savebtn.on svg path { fill: var(--ochre); stroke: var(--ochre-deep); }
 
   /* ================= PANEL (contents / saved) ================= */
   .panel {
@@ -174,7 +189,7 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 1.2rem var(--pad); border-bottom: 1px solid var(--line); flex-shrink: 0;
   }
-  .panel-title { font-size: 1.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.035em; }
+  .panel-title { font-size: 1.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.03em; -webkit-font-smoothing: antialiased; }
   .panel-top button { padding: 0.5rem 0 0.5rem 1rem; min-height: 44px; }
   .panel-body { overflow-y: auto; overscroll-behavior: contain; padding: 0 var(--pad) calc(2rem + env(safe-area-inset-bottom)); -webkit-overflow-scrolling: touch; }
   .sect { padding: 1.6rem 0 0.7rem; }
@@ -185,7 +200,7 @@
   .toc .num { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--mid); width: 1.6rem; flex-shrink: 0; }
   .toc .t { flex: 1; font-size: 1.02rem; line-height: 1.32; }
   .toc.done .t { color: var(--mid); }
-  .toc.mark .num { color: var(--oxide); }
+  .toc.mark .num { color: var(--ochre-deep); }
   .toc .from { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); flex-shrink: 0; max-width: 7rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .blank { padding: 3rem 0; color: var(--mid); }
 
@@ -198,7 +213,9 @@
   .complete.active { display: flex; }
   .complete .mono { color: var(--paper); opacity: 0.55; }
   .complete-mid { display: flex; flex-direction: column; justify-content: center; flex: 1; }
-  .complete-word { font-size: clamp(3.2rem, 17vw, 5.2rem); font-weight: 700; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.88; }
+  /* the completion screen inverts the scheme — light type on dark reads
+     heavier, so this one keeps its tight tracking and antialiasing */
+  .complete-word { font-size: clamp(3.2rem, 17vw, 5.2rem); font-weight: 700; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.88; -webkit-font-smoothing: antialiased; }
   .complete-book { margin-top: 1.6rem; font-size: 1.15rem; line-height: 1.3; max-width: 22ch; }
   .complete .meter { margin-top: 2rem; }
   .complete .blk { background: var(--paper); border-color: var(--paper); height: 10px; }
