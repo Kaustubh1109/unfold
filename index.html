@@ -333,7 +333,7 @@ function paras(t) { return t.split(/\n\n+/).map(p => "<p>" + esc(p) + "</p>").jo
 function pad2(n) { return n < 10 ? "0" + n : String(n); }
 function buzz(p) { if (navigator.vibrate) navigator.vibrate(p); }
 
-/* One block per idea. Filled = read. Oxide = saved. Ringed = where you are. */
+/* One block per idea. Filled = read. Ochre = saved. Ringed = where you are. */
 function meterHTML(b, opts) {
   const o = opts || {};
   return b.concepts.map((c, i) => {
