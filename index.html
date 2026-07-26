@@ -129,7 +129,8 @@
   /* scoped to the plain text buttons only — .readbtn/.savebtn size themselves */
   .reader-top > button, .reader-top button.mono { padding: 0.5rem 0; min-height: 44px; display: flex; align-items: center; }
   .reader-rail { padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
-  .reader-rail .bookname { display: block; margin-bottom: 0.6rem; }
+  .railtop { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.6rem; }
+  .railtop .bookname { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .concept { padding-top: 1.7rem; }
   .concept.out { opacity: 0; transition: opacity 0.12s linear; }
@@ -140,14 +141,16 @@
   .pill { display: inline-block; padding: 0.34rem 0.8rem 0.3rem; border: 1px solid var(--line-strong); border-radius: 999px; margin-bottom: 1.15rem; }
   .concept-title { font-size: clamp(2.15rem, 10.2vw, 3.05rem); margin-bottom: 1.5rem; }
   .taphint { display: block; margin-top: 1.9rem; opacity: 0.45; }
-  .hook { font-size: 1.2rem; line-height: 1.45; font-weight: 400; letter-spacing: -0.012em; max-width: 34ch; }
+  /* --tsize scales the reading prose only: hook, idea, deeper. Titles, mono
+     labels and every control stay put, so the page furniture never moves. */
+  .hook { font-size: calc(1.2rem * var(--tsize, 1)); line-height: 1.45; font-weight: 400; letter-spacing: -0.012em; max-width: 34ch; }
 
   .layer { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.38s var(--snap), opacity 0.22s linear; }
   .layer.open { grid-template-rows: 1fr; opacity: 1; }
   .layer-in { min-height: 0; overflow: hidden; }
   .layer-head { display: flex; align-items: center; gap: 0.75rem; margin: 2.3rem 0 1.5rem; }
   .layer-head::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-  .layer-in p { margin-bottom: 1.15rem; }
+  .layer-in p { font-size: calc(1.055rem * var(--tsize, 1)); margin-bottom: 1.09em; }
   .layer-in p:last-of-type { margin-bottom: 0; }
   .srcline { margin-top: 2.2rem; padding-top: 1rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 1rem; }
 
@@ -170,6 +173,14 @@
   }
   .readbtn.on { background: var(--ink); border-color: var(--ink); }
   .readbtn.on .mono { color: var(--paper); }
+
+  /* sizes the reading text and nothing else. Same 34px box as .readbtn/.arrow
+     so it reads as one of the controls, not a new species. */
+  .sizebtn {
+    flex-shrink: 0; height: 34px; padding: 0 0.6rem; display: flex; align-items: center;
+    border: 1px solid var(--line-strong); transition: background 0.14s linear;
+  }
+  .sizebtn:active { background: var(--line-strong); }
 
   .savebtn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line-strong); transition: border-color 0.14s linear; }
   .savebtn svg { width: 12px; height: 16px; display: block; }
@@ -254,7 +265,10 @@
     </div>
   </div>
   <div class="reader-rail">
-    <span class="mono bookname" id="reader-book"></span>
+    <div class="railtop">
+      <span class="mono bookname" id="reader-book"></span>
+      <button class="mono sizebtn" id="sizebtn" onclick="cycleSize()" aria-label="Text size"></button>
+    </div>
     <div class="ctrl">
       <button class="arrow" id="prev" onclick="step(-1)" aria-label="Previous idea">
         <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M8 1 L3 6 L8 11"/></svg>
@@ -556,6 +570,38 @@ function toggleSave() {
   renderControls(); refreshMeter();
 }
 
+/* ================= TEXT SIZE ================= */
+/* One button, four steps, wrapping back to S. Drives --tsize, which only
+   .hook and .layer-in p read — so the reading grows and the furniture
+   (titles, meter, controls, library, panels) stays exactly where it was. */
+const TSIZES = [
+  { name: "S",  scale: 0.92 },
+  { name: "M",  scale: 1 },
+  { name: "L",  scale: 1.12 },
+  { name: "XL", scale: 1.26 }
+];
+
+function sizeIndex() {
+  const i = S.flags.tsize;
+  return (typeof i === "number" && i >= 0 && i < TSIZES.length) ? i : 1;   /* M by default */
+}
+
+function applySize() {
+  const t = TSIZES[sizeIndex()];
+  document.documentElement.style.setProperty("--tsize", t.scale);
+  const btn = document.getElementById("sizebtn");
+  if (!btn) return;
+  btn.textContent = "Size " + t.name;
+  btn.setAttribute("aria-label", "Text size " + t.name + ", tap to change");
+}
+
+function cycleSize() {
+  S.flags.tsize = (sizeIndex() + 1) % TSIZES.length;
+  save();
+  applySize();
+  buzz(4);
+}
+
 /* ================= TAP / SWIPE ================= */
 (function () {
   const zone = document.getElementById("reader");
@@ -686,6 +732,7 @@ document.addEventListener("keydown", e => {
 });
 
 /* ================= BOOT ================= */
+applySize();
 loadBooks();
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
